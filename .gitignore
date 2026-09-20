@@ -37,3 +37,6 @@ deploy/out/
 .DS_Store
 .idea/
 .vscode/
+
+# 本地 SSH 密钥（用于推送到 GitHub，绝不提交）
+.ssh-local/
