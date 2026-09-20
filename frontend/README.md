@@ -46,7 +46,7 @@ npm run build      # 产物在 dist/
 | 入口 | 体积（gzip） |
 |---|---|
 | 考生端 | ~14 kB + 共享 ~94 kB（约 42 kB gzip） |
-| 管理端 | ~562 kB（约 190 kB gzip，主要是 ECharts） |
+| 管理端 | ~581 kB（约 196 kB gzip，主要是 ECharts） |
 
 考生端刻意保持很小，因为它要在手机流量下打开。
 
@@ -56,7 +56,7 @@ npm run build      # 产物在 dist/
 
 ```bash
 npm run typecheck   # 类型检查（vue-tsc）
-npm test            # Vitest 单元测试（71 个用例）
+npm test            # Vitest 单元测试（159 个用例）
 npm run test:e2e    # Playwright 浏览器 E2E（主干流程）
 npm run verify      # typecheck + 单测 + 构建
 ```

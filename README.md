@@ -1,12 +1,57 @@
 # 极轻量级客观题考试系统
 
 内网、单机、低运维的客观题（单选 / 多选 / 判断）考试平台。
-**考试过程中考生端与后端零交互**，答案存浏览器 IndexedDB，交卷时一次性提交，
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)
+![Node](https://img.shields.io/badge/node-16%2B-brightgreen.svg)
+![Vue](https://img.shields.io/badge/vue-3-42b883.svg)
+
+**核心特征：考试过程中考生端与后端零交互。** 答案存浏览器 IndexedDB，交卷时一次性提交，
 服务端统一判分，管理员导出成绩 CSV 后线下告知考生。
 
-- 规格说明：`极轻量级客观题考试系统— 规格说明.md`
-- 技术架构：`极轻量级客观题考试系统— 技术架构.md`
-- 测试方案：`极轻量级客观题考试系统 — 测试方案.md`
+## 功能特性
+
+**考生端**（手机）
+
+- 手机号 + 邀请码登录，校验时间窗口与交卷状态
+- 一页到底答题，顶部固定倒计时（统一截止时间，晚进不补时）
+- 答案实时写入 IndexedDB，刷新 / 断网 / 浏览器崩溃均可恢复
+- 答题卡显示已答未答、点击跳题
+- 选项内容按考生独立乱序（防抄袭），但标号恒为 A、B、C、D
+- 切屏记录次数与时间点；到点自动交卷
+- 交卷失败自动重试 3 次（2s / 4s / 8s），仍失败给出手动「重试提交」，答案不丢
+
+**管理端**（桌面）
+
+- **考试管理**：按状态 / 选聘编号 / 名称 / 开考时间查询，建草稿、发布、归档
+- **考生管理**：按考试场次导入名单、生成邀请码，查看看谁没来 / 谁在考试 / 谁已交卷
+- **试卷管理**：只读查看每场考试抽中的题目与正确答案
+- **题库管理**：增删改查、JSON 批量导入、CSV 导出、题目统计（上次被抽中 / 累计正确率）
+- **成绩统计**：平均分、及格率、题目标错率图表，成绩 CSV 导出
+
+**工程**
+
+- 判分引擎分支覆盖率 100%，变异测试 M1–M10 全部被捕获
+- 200 并发交卷压测通过
+- 一键生成 Linux ARM64 离线部署包（目标服务器无需 pip / npm / Docker / 外网）
+
+## 文档导航
+
+| 文档 | 读者 | 内容 |
+|---|---|---|
+| [<small>考生使用手册</small>](<docs/使用手册-考生.md>) | 考生 | 登录、答题、交卷、常见问题 |
+| [<small>管理员使用手册</small>](<docs/使用手册-管理员.md>) | 管理员 | 四个模块操作、关键规则、考试当天检查清单 |
+| [<small>题库模板</small>](<docs/题库模板.md>) | 出题人 | 让 AI 按格式批量出题 |
+| [<small>部署说明</small>](<deploy/package/README-部署.md>) | 运维 | 内网服务器离线部署 |
+| [<small>规格说明</small>](<极轻量级客观题考试系统— 规格说明.md>) | 所有人 | 系统"要做什么" |
+| [<small>技术架构</small>](<极轻量级客观题考试系统— 技术架构.md>) | 开发 | 数据模型、API、关键设计 |
+| [<small>测试方案</small>](<极轻量级客观题考试系统 — 测试方案.md>) | 开发 | 测试策略与准出标准 |
+| [<small>UI/UX 设计规范</small>](<docs/UI-UX-设计规范.md>) | 开发 | 界面、交互与文案规范 |
+| [<small>变更记录</small>](<docs/变更记录.md>) | 所有人 | 每轮试用反馈的变更轨迹 |
+| [<small>设计决策与规格偏差</small>](<docs/设计决策与规格偏差.md>) | 开发 | 口径澄清与实现取舍 |
+| [<small>测试追溯矩阵</small>](<docs/测试追溯矩阵.md>) | 开发 / QA | 规格 → 测试逐条追溯 |
+| [<small>第三方组件与许可证</small>](THIRD-PARTY-NOTICES.md) | 所有人 | 依赖许可证审计 |
 
 ---
 
@@ -15,8 +60,8 @@
 | 部分 | 状态 | 说明 |
 |---|---|---|
 | **后端** | ✅ 已完成 | FastAPI + SQLModel + SQLite WAL，覆盖测试方案第 10 节阶段 1–7 |
-| **后端测试套件** | ✅ 已完成 | 232 个用例全部通过；判分引擎分支覆盖率 100%；变异测试 M1–M10 全部被捕获 |
-| **前端（考生端 + 管理端）** | ✅ 已完成 | Vue3 + Vite + TS；140 个 Vitest 用例 + Playwright 浏览器 E2E 主干流程 |
+| **后端测试套件** | ✅ 已完成 | **250** 个用例全部通过；判分引擎分支覆盖率 100%；变异测试 M1–M10 全部被捕获 |
+| **前端（考生端 + 管理端）** | ✅ 已完成 | Vue3 + Vite + TS；**159** 个 Vitest 用例 + Playwright 浏览器 E2E 主干流程 |
 | **离线部署包（Linux ARM64）** | ✅ 已完成 | 自带全部 aarch64 依赖，服务器无需 pip / npm / Docker / 外网；见 `deploy/package/README-部署.md` |
 | Docker / Nginx 编排 | ⛔ 未做（不需要） | 部署包用零依赖 Node 服务器承担静态托管与反向代理，无需 Nginx；无 Docker 环境亦可运行 |
 
@@ -139,7 +184,7 @@ cd backend
 
 | 命令 | 用途 |
 |---|---|
-| `pytest tests/` | 232 个用例，约 14 秒 |
+| `pytest tests/` | 250 个用例，约 18 秒 |
 | `pytest tests/ -m "not slow"` | 跳过 200 并发压测 |
 | `scripts/mutation_check.py` | 逐个注入 M1–M10 错误，验证测试确实能捕获 |
 | `scripts/smoke_e2e.py` | 对真实后端服务做端到端冒烟 |
@@ -150,7 +195,7 @@ cd backend
 cd frontend
 
 npm run typecheck    # vue-tsc 类型检查
-npm test             # Vitest 单元/组件测试（71 个用例）
+npm test             # Vitest 单元/组件测试（159 个用例）
 npm run test:e2e     # Playwright 浏览器 E2E（主干流程）
 npm run verify       # typecheck + 单测 + 构建
 npm run build        # 生产构建 → dist/
@@ -163,6 +208,8 @@ npm run build        # 生产构建 → dist/
 ```
 os-online-test-project/
 ├── README.md                      # 本文件
+├── LICENSE                        # MIT 许可证
+├── THIRD-PARTY-NOTICES.md         # 第三方依赖许可证审计
 ├── docs/
 │   ├── 测试追溯矩阵.md              # 规格 → 测试 的逐条追溯（准出 E7）
 │   ├── UI-UX-设计规范.md            # 界面/交互/文案规范
@@ -171,9 +218,9 @@ os-online-test-project/
 │   ├── 使用手册-管理员.md           # 给管理员的操作手册（含考试当天检查清单）
 │   ├── 题库模板.md                  # 让 AI 按格式批量出题（含指令模板与自检清单）
 │   └── 设计决策与规格偏差.md         # 口径澄清与实现取舍记录
-├── 极轻量级客观题考试系统— 规格说明.md   # 输入资产（只读）
-├── 极轻量级客观题考试系统— 技术架构.md   # 输入资产（只读）
-├── 极轻量级客观题考试系统 — 测试方案.md  # 输入资产（只读）
+├── 极轻量级客观题考试系统— 规格说明.md   # 输入资产（系统"要做什么"）
+├── 极轻量级客观题考试系统— 技术架构.md   # 输入资产（数据模型与 API）
+├── 极轻量级客观题考试系统 — 测试方案.md  # 输入资产（测试策略与准出）
 ├── backend/
 │   ├── app/
 │   │   ├── main.py            # 应用工厂、依赖注入、异常映射
@@ -192,7 +239,7 @@ os-online-test-project/
 │   │   └── routers/
 │   │       ├── candidate.py   # 考生端 API
 │   │       └── admin.py       # 管理端 API
-│   ├── tests/                 # pytest 套件（13 个测试文件 / 192 用例）
+│   ├── tests/                 # pytest 套件（19 个测试文件 / 250 用例）
 │   ├── scripts/
 │   │   ├── mutation_check.py  # 变异测试执行器
 │   │   └── smoke_e2e.py       # 端到端冒烟
@@ -205,7 +252,7 @@ os-online-test-project/
     ├── vite.config.ts         # 构建 + Vitest 配置 + /api 代理
     ├── playwright.config.ts   # E2E 配置（自动拉起前后端）
     ├── e2e/main-flow.spec.ts  # 浏览器主干流程 E2E
-    ├── tests/                 # Vitest 套件（6 个文件 / 71 用例）
+    ├── tests/                 # Vitest 套件（13 个文件 / 159 用例）
     └── src/
         ├── api/client.ts      # 类型化 API 客户端
         ├── lib/               # 可独立测试的纯逻辑（时间/答案/存储/重试/切屏）
@@ -269,7 +316,7 @@ os-online-test-project/
 | 编号 | 标准 | 状态 | 证据 |
 |---|---|---|---|
 | E1 | 判分引擎分支覆盖率 100% | ✅ | `app/scoring.py` 39 语句 / 20 分支 / 0 未覆盖 |
-| E2 | 所有 P0 模块不变量断言通过 | ✅ | 192 用例全绿，整体分支覆盖率 89% |
+| E2 | 所有 P0 模块不变量断言通过 | ✅ | 250 用例全绿，整体分支覆盖率 **91%** |
 | E3 | 变异测试 M1–M10 全部被捕获 | ✅ | `scripts/mutation_check.py` → 10/10，报告见 `mutation-report.md` |
 | E4 | 试卷接口契约测试通过 | ✅ | `tests/test_paper_contract.py`（递归字段检查 + 精确字段集） |
 | E5 | 幂等测试通过（含并发） | ✅ | `tests/test_attempt_idempotency.py`（含 2 线程同 attempt 并发） |
@@ -322,11 +369,13 @@ os-online-test-project/
 
 ## 8. 后续可做（非阻塞）
 
-1. **部署编排**：本轮按约定未做。前端 `dist/` 是纯静态文件（hash 路由，无需 rewrite），
-   后端 `uvicorn` 单进程即可，Docker Compose + Nginx 属可选的打包工作。
-2. **前端优化**：管理端 bundle 因 ECharts 约 562 kB（gzip 190 kB）。
+1. **发布离线包 Release**：`deploy/out/*.tar.gz`（约 19 MB）未纳入版本库
+   （构建产物不应进 git）。若需要在服务器上直接下载，可发一个 GitHub Release 挂上去。
+2. **持续集成**：目前全套测试靠本地命令执行（见第 3 节），
+   可加 GitHub Actions 在提交时自动跑 `pytest` / `vitest` / `vue-tsc` / E2E。
+3. **前端优化**：管理端 bundle 因 ECharts 约 581 kB（gzip 196 kB）。
    管理端是桌面端，影响有限；若要优化可改为按需异步加载图表组件。
-3. **监控与告警**：当前日志写本地文件，可按需接入内网日志收集。
+4. **监控与告警**：当前日志写本地文件，可按需接入内网日志收集。
 
 ---
 
@@ -334,3 +383,16 @@ os-online-test-project/
 
 考生查分入口、发布成绩流程、设备锁、考试中答案保存接口、定时任务扫描状态、
 Redis / MQ / 微服务 / K8s、图片音频题目、多机构多租户。
+
+---
+
+## 10. 许可证
+
+本项目采用 **MIT License**，详见 [LICENSE](LICENSE)。
+
+第三方依赖全部为宽松许可证（MIT / BSD / Apache-2.0 / ISC / MPL-2.0 等），
+**不含任何 GPL / AGPL / LGPL 传染性许可**，因此采用 MIT 无冲突。
+完整的依赖清单与审计结论见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
+
+> 仓库内 `规格说明`、`技术架构`、`测试方案` 三份文档为项目负责人提供的输入资产，
+> 随本项目一同以 MIT 授权；若其中含第三方受版权保护内容，对外分发前请自行确认。
