@@ -1,0 +1,12 @@
+# 后端运行依赖（离线部署用）
+#
+# 关键点：
+#   1. 刻意使用 uvicorn 而不是 uvicorn[standard]。
+#      [standard] 会带入 uvloop / httptools / watchfiles 等需要编译的扩展，
+#      在内网无编译环境下风险高；普通 uvicorn 只需 h11，纯 Python 足够。
+#   2. 全部依赖以 linux/aarch64 预编译 wheel 形式随包分发，服务器不联网、不编译。
+#   3. 版本锁定为开发与测试时实际使用的版本，保证行为一致。
+
+fastapi==0.141.1
+uvicorn==0.53.0
+sqlmodel==0.0.42
